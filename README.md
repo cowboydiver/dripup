@@ -1,24 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bicycle Commute Clothing Recommendation App
+
+A modern Next.js web app that tells you what clothes to wear on your bicycle commute, based on weather and daylight at your commute time and location. Built with Radix UI Themes for a beautiful, accessible interface.
+
+## Features
+- Enter your location and commute time
+- Real-time weather and daylight data (Open-Meteo API)
+- Geocoding for street addresses (OpenCage API)
+- Clothing recommendations for your bicycle commute
+- Modern, accessible UI with Radix Themes
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 1. Clone the repository
+```sh
+git clone <your-repo-url>
+cd <your-repo-directory>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```sh
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Set up environment variables
+Create a `.env.local` file in the project root:
+```env
+OPENCAGE_API_KEY=your_opencage_api_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Run the development server
+```sh
+npm run dev
+```
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Environment Variables
+- `OPENCAGE_API_KEY`: Your [OpenCage Geocoding API](https://opencagedata.com/) key for address lookup.
+
+## Tech Stack
+- [Next.js](https://nextjs.org/) (App Router)
+- [Radix UI Themes](https://themes.radix-ui.com/)
+- [Open-Meteo API](https://open-meteo.com/) (weather)
+- [OpenCage API](https://opencagedata.com/) (geocoding)
+- TypeScript
+
+## License
+MIT
 
 ## Learn More
 
