@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Container, Card, Button, Heading, Flex, Text } from '@radix-ui/themes';
+import { Container, Card, Button, Heading, Flex, Text, Switch, TextField } from '@radix-ui/themes';
 
 // Hardcoded coordinates for the location
 const HARDCODED_LOCATION = {
@@ -45,8 +45,20 @@ export default function Home() {
   }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dummyMode, setDummyMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('dummyMode');
+      return stored === 'true';
+    }
+    return false;
+  });
+  // Dummy data controls
+  const [dummyTemp, setDummyTemp] = useState('10');
+  const [dummyPrecip, setDummyPrecip] = useState('0');
+  const [dummyWind, setDummyWind] = useState('3');
+  const [dummyCode, setDummyCode] = useState('0');
 
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = async (dummy = dummyMode) => {
     setLoading(true);
     setError(null);
     try {
@@ -56,9 +68,13 @@ export default function Home() {
         recommendation: string;
         weather?: Weather;
       }[] = [];
+      let query = `?dummy=${dummy ? '1' : '0'}`;
+      if (dummy) {
+        query += `&temp=${dummyTemp}&precip=${dummyPrecip}&wind=${dummyWind}&code=${dummyCode}`;
+      }
       for (let i = 0; i <= days; i++) {
         const isoDate = getIsoDateForDay(i);
-        const res = await fetch('/api/recommendation', {
+        const res = await fetch(`/api/recommendation${query}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat: HARDCODED_LOCATION.lat, lon: HARDCODED_LOCATION.lon, datetime: isoDate }),
@@ -81,14 +97,82 @@ export default function Home() {
   useEffect(() => {
     fetchRecommendations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dummyMode]);
+
+  const handleToggleDummy = () => {
+    setDummyMode((prev) => {
+      localStorage.setItem('dummyMode', (!prev).toString());
+      return !prev;
+    });
+  };
 
   return (
     <Container size="2" mt="6">
       <Card size="3" style={{ maxWidth: 480, margin: '0 auto' }}>
         <Heading mb="4">Bicycle Commute Clothing Recommendation</Heading>
         <Text mb="3">Location: {HARDCODED_LOCATION.placeName}</Text>
-        <Button onClick={fetchRecommendations} disabled={loading} mb="4">
+        <Flex align="center" gap="2" mb="4">
+          <Switch checked={dummyMode} onCheckedChange={handleToggleDummy} />
+          <Text>Dummy data: {dummyMode ? 'ON' : 'OFF'}</Text>
+        </Flex>
+        {dummyMode && (
+          <Flex direction="column" gap="2" mb="4">
+            <Flex align="center" gap="2">
+              <TextField.Root
+                type="number"
+                value={dummyTemp}
+                onChange={e => setDummyTemp(e.target.value)}
+                style={{ width: 80 }}
+                min="-30"
+                max="40"
+                step="1"
+                placeholder="Temp (°C)"
+              />
+              <Text>°C</Text>
+            </Flex>
+            <Flex align="center" gap="2">
+              <TextField.Root
+                type="number"
+                value={dummyPrecip}
+                onChange={e => setDummyPrecip(e.target.value)}
+                style={{ width: 80 }}
+                min="0"
+                max="100"
+                step="0.1"
+                placeholder="Precip (mm)"
+              />
+              <Text>mm</Text>
+            </Flex>
+            <Flex align="center" gap="2">
+              <TextField.Root
+                type="number"
+                value={dummyWind}
+                onChange={e => setDummyWind(e.target.value)}
+                style={{ width: 80 }}
+                min="0"
+                max="40"
+                step="1"
+                placeholder="Wind (m/s)"
+              />
+              <Text>m/s</Text>
+            </Flex>
+            <Flex align="center" gap="2">
+              <TextField.Root
+                type="number"
+                value={dummyCode}
+                onChange={e => setDummyCode(e.target.value)}
+                style={{ width: 80 }}
+                min="0"
+                max="99"
+                step="1"
+                placeholder="Weather code"
+              />
+              <Text>code</Text>
+            </Flex>
+            <Text size="1" color="gray">Weather codes: 0=Clear, 1=Mainly clear, 2=Partly cloudy, 3=Overcast, 61=Rain, 65=Heavy rain, 71=Snow, 75=Heavy snow, 95=Thunderstorm, etc.</Text>
+          </Flex>
+        )}
+        <Button onClick={() => fetchRecommendations()} disabled={loading} mb="4">
           {loading ? 'Loading...' : 'Refresh Recommendations'}
         </Button>
         <Flex direction="column" gap="2">

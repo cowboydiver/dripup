@@ -46,7 +46,32 @@ function getWeatherDescription(weathercode: number): string {
   return codes[weathercode] || 'Unknown';
 }
 
-export async function getWeatherData(lat: number, lon: number, datetime: Date): Promise<WeatherData> {
+export async function getWeatherData(
+  lat: number,
+  lon: number,
+  datetime: Date,
+  options?: {
+    dummyMode?: boolean;
+    dummyTemp?: number;
+    dummyPrecip?: number;
+    dummyWind?: number;
+    dummyCode?: number;
+  }
+): Promise<WeatherData> {
+  const dummyMode = options?.dummyMode ?? false;
+  if (dummyMode) {
+    // Use custom dummy values if provided, otherwise use defaults
+    return {
+      temperature: options?.dummyTemp ?? 10,
+      windSpeed: options?.dummyWind ?? 3,
+      precipitation: options?.dummyPrecip ?? 0,
+      isDaylight: true,
+      description: getWeatherDescription(options?.dummyCode ?? 0),
+      sunrise: '2024-06-01T04:30:00+02:00',
+      sunset: '2024-06-01T21:45:00+02:00',
+    };
+  }
+
   // Format date for Open-Meteo (YYYY-MM-DD)
   const dateStr = datetime.toISOString().slice(0, 10);
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,precipitation_sum,weathercode,windspeed_10m_max,sunrise,sunset&start_date=${dateStr}&end_date=${dateStr}&timezone=auto&windspeed_unit=ms`;
