@@ -25,5 +25,10 @@ export function getClothingRecommendation(weather: WeatherData): string {
     }
   }
 
+  // Add sunglasses recommendation if clear sky
+  if (weather.description === 'Clear sky') {
+    rec += " Don't forget sunglasses.";
+  }
+
   return rec;
 }

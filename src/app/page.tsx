@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Container, Card, Button, Heading, Flex, Text, Switch, TextField } from '@radix-ui/themes';
+import Image from 'next/image';
 
 // Hardcoded coordinates for the location
 const HARDCODED_LOCATION = {
@@ -35,6 +36,30 @@ interface Weather {
   description: string;
   sunrise?: string;
   sunset?: string;
+}
+
+function getIconsForRecommendation(rec: string) {
+  const icons = [];
+  // Gloves/hat: no PNG, so skip
+  if (/t-shirt/i.test(rec)) icons.push(
+    <Image key="tshirt" src="/tshirt.png" alt="T-shirt" width={40} height={40} style={{objectFit:'contain'}} />
+  );
+  if (/light jacket|sweater/i.test(rec)) icons.push(
+    <Image key="lightjacket" src="/light_jacket.png" alt="Light jacket" width={40} height={40} style={{objectFit:'contain'}} />
+  );
+  if (/warm jacket|heavy jacket/i.test(rec)) icons.push(
+    <Image key="heavyjacket" src="/heavyjacket.png" alt="Heavy jacket" width={40} height={40} style={{objectFit:'contain'}} />
+  );
+  if (/waterproof/i.test(rec)) icons.push(
+    <Image key="raincoat" src="/raincoat.png" alt="Raincoat" width={40} height={40} style={{objectFit:'contain'}} />
+  );
+  if (/reflective vest|bike lights/i.test(rec)) icons.push(
+    <Image key="vest" src="/reflectivevest.png" alt="Reflective vest" width={40} height={40} style={{objectFit:'contain'}} />
+  );
+  if (/sunglasses/i.test(rec)) icons.push(
+    <Image key="sunglasses" src="/sunglasses.png" alt="Sunglasses" width={40} height={40} style={{objectFit:'contain'}} />
+  );
+  return icons;
 }
 
 export default function Home() {
@@ -189,6 +214,7 @@ export default function Home() {
                   <Text as="div">Sunset: {rec.weather.sunset ? new Date(rec.weather.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</Text>
                 </>
               )}
+              <Flex gap="2" mt="2">{getIconsForRecommendation(rec.recommendation)}</Flex>
               <Text as="div" mt="2">{rec.recommendation}</Text>
             </Card>
           ))}
