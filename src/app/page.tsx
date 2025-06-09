@@ -8,7 +8,7 @@ import Image from 'next/image';
 const HARDCODED_LOCATION = {
   lat: 56.1518,
   lon: 10.2064,
-  placeName: 'Aarhus, Denmark',
+  placeName: 'Better Developers HQ',
 };
 
 function getIsoDateForDay(dayOffset: number) {
@@ -112,8 +112,8 @@ export default function Home() {
         }
       }
       setRecommendations(recs);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -121,23 +121,18 @@ export default function Home() {
 
   useEffect(() => {
     fetchRecommendations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dummyMode]);
-
-  const handleToggleDummy = () => {
-    setDummyMode((prev) => {
-      localStorage.setItem('dummyMode', (!prev).toString());
-      return !prev;
-    });
-  };
+  }, []);
 
   return (
     <Container size="2" mt="6">
       <Card size="3" style={{ maxWidth: 480, margin: '0 auto' }}>
-        <Heading mb="4">Bicycle Commute Clothing Recommendation</Heading>
+        <Heading mb="4">What to wear to work</Heading>
         <Text mb="3">Location: {HARDCODED_LOCATION.placeName}</Text>
         <Flex align="center" gap="2" mb="4">
-          <Switch checked={dummyMode} onCheckedChange={handleToggleDummy} />
+          <Switch checked={dummyMode} onCheckedChange={() => setDummyMode((prev) => {
+            localStorage.setItem('dummyMode', (!prev).toString());
+            return !prev;
+          })} />
           <Text>Dummy data: {dummyMode ? 'ON' : 'OFF'}</Text>
         </Flex>
         {dummyMode && (
@@ -202,7 +197,20 @@ export default function Home() {
         </Button>
         <Flex direction="column" gap="2">
           {recommendations.map((rec, idx) => (
-            <Card key={rec.date} style={{ background: '#f8f8f8' }}>
+            <Card
+              key={rec.date}
+              style={
+                idx === 0
+                  ? {
+                      background: '#fffbe6',
+                      border: '2px solid #fbbf24',
+                      boxShadow: '0 2px 12px 0 rgba(251,191,36,0.15)',
+                      transform: 'scale(1.03)',
+                      zIndex: 1,
+                    }
+                  : { background: '#f8f8f8' }
+              }
+            >
               <Text weight="bold">{getDayLabel(idx, rec.date)}</Text>
               {rec.weather && (
                 <>
