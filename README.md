@@ -2,7 +2,7 @@
 
 A modern Next.js web app that tells you what clothes to wear for your bicycle commute to work, based on the weather and daylight at your location. Built with Radix UI Themes for a beautiful, accessible interface.
 
-**🌐 Live app:** [drip.vercel.app](https://drip.vercel.app)
+**🌐 Live app:** [drip.vercel.app](https://dripup.vercel.app)
 
 ## Features
 - 7-day weather-based clothing recommendations for a hardcoded location (Better Developers HQ)
